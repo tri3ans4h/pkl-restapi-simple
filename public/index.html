@@ -1,0 +1,51 @@
+<html>
+<head>
+</head>
+<body>
+<h1>Hello World</h1>
+<script>
+const userAction = async () => {
+  const response = await fetch('http://localhost:3000');
+  const myJson = await response.json(); //extract JSON from the http response
+}
+
+userAction();
+ 
+const auth = async () => {
+	var txtUsername = document.getElementById("txtUsername").value;
+	var txtPassword = document.getElementById("txtPassword").value;
+	var creadentials = {
+		"username":txtUsername,
+		"password":txtPassword
+	}
+	const rsp = await fetch('http://localhost:3000/auth', {
+	method: 'POST',
+	body: JSON.stringify(creadentials), // string or object
+	headers: {
+	  'Content-Type': 'application/json'
+	}
+	});
+	const res =  await rsp;
+	if(res.status == 200){
+		const x =  await res.json();
+		localStorage.setItem("sesi", x.msg);
+		window.location.href = "http://localhost:3001/info.html";
+	}else{
+		alert('Gagal Login');
+	}
+	//const x =  await rsp.json();
+	//localStorage.setItem("sesi", x.msg);
+
+//	window.location.href = "http://localhost:3001/info.html";
+}
+
+var sesi = localStorage.getItem("sesi");
+if(sesi!=null || undefined){	
+	window.location.href = "http://localhost:3001/info.html";
+}
+</script>
+	<input type='text' id="txtUsername" name='username'/>
+	<input type='text' id="txtPassword" name='password' />
+	<button  onclick="auth()" >LOGIN</button>
+</body>
+</html>

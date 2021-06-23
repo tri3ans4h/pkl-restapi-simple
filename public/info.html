@@ -1,0 +1,21 @@
+<html>
+<head>
+</head>
+<body>
+<h1>Info</h1>
+
+
+<p id="nama"></p>
+<button  onclick="logout()" >LOGOUT</button>
+
+
+<script>
+const logout = async () => {
+var sesi = localStorage.removeItem("sesi");
+	window.location.href = "http://localhost:3001";
+}
+document.getElementById("nama").innerHTML = 'Selamat Datang ' + localStorage.getItem("sesi");
+
+</script>
+</body>
+</html>
