@@ -435,8 +435,93 @@
 		</div>
 	</body>
 	<script>
+	
+var wsUri = "ws://localhost:8080";
+var output;
+var websocket = null;
+var UserList = [];
+  function onOpen(evt)
+  {
+	console.log("connected")
+    //random user
+	//send respon
+	
+	//writeToScreen("CONNECTED");
+    //doSend("WebSocket rocks");
+	var msg = {"req":"join","channel":"chat","username":"user-admin"}
+	websocket.send(JSON.stringify(msg));
+	var msg = {"req":"UserList","channel":"chat"}
+	websocket.send(JSON.stringify(msg));
+	
+	
+	//var msg = {"req":"join","channel":"app","username":"user-admin"}
+	//websocket.send(JSON.stringify(msg));
+  }
+  
+	 function onClose(evt)
+  {
+   // writeToScreen("DISCONNECTED");
+  }
+
+  function onMessage(evt)
+  {
+	let Msg = null;
+	try {
+		Msg = JSON.parse( evt.data);
+	}
+	catch(err) {
+	
+	}
+	if(Msg != null){
+		if(Msg.req == 'UserList'){
+			this.UserList = Msg.data
+			$('.contacts').empty();
+				for(var x=0;x< UserList.length;x++){
+				$('.contacts').append(
+					`<li class='container_user' username='`+UserList[x].username+`'>`+
+					`<div class="d-flex bd-highlight">`+
+					`<div class="img_cont">`+
+					`<img src="`+UserList[x].img_profile+`" class="rounded-circle user_img">`+
+					`<span class="online_icon offline"></span>`+
+					`</div>`+
+					`<div class="user_info" >`+
+					`<span>`+UserList[x].username+`</span>`+
+					`<p>Taherah left 7 mins ago</p>`+
+					`</div>`+
+					`</div>`+
+					`</li>`
+				);
+			}
+		}
+	}
+    //writeToScreen('<span style="color: blue;">' +Msg.username+' say : '+  Msg.msg+'</span>');
+    //websocket.close();
+  }
+
+  function onError(evt)
+  {
+    //writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+  }
+
+  function doSend(message)
+  {
+    //writeToScreen("SENT: " + message);
+    //websocket.send(message);
+  }
+  
+	
 		$(document).ready(function(){
-			var UserList = [
+		
+		if(websocket == null ){
+			websocket = new WebSocket(wsUri);
+			websocket.onopen = function(evt) { onOpen(evt) };
+			websocket.onclose = function(evt) { onClose(evt) };
+			websocket.onmessage = function(evt) { onMessage(evt) };
+			websocket.onerror = function(evt) { onError(evt) };
+		}
+
+
+			/* UserList = [
 				{
 					"username":"user1",
 					"nama":"User 1",
@@ -452,7 +537,7 @@
 				
 					"chat_data" : []
 				}
-			];
+			];*/
 			
 			
 			for(var x=0;x< UserList.length;x++){
