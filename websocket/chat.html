@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+  <meta charset="utf-8" />
+  <title>WebSocket Test</title>
+  <script language="javascript" type="text/javascript">
+
+  var wsUri = "ws://localhost:8080";
+  var output;
+
+  function init()
+  {
+    output = document.getElementById("output");
+    testWebSocket();
+  }
+
+  function testWebSocket()
+  {
+    websocket = new WebSocket(wsUri);
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+  }
+
+  function onOpen(evt)
+  {
+    writeToScreen("CONNECTED");
+    doSend("WebSocket rocks");
+  }
+
+  function onClose(evt)
+  {
+    writeToScreen("DISCONNECTED");
+  }
+
+  function onMessage(evt)
+  {
+  let Msg = null;
+	try {
+		Msg = JSON.parse( evt.data);
+	}
+	catch(err) {
+	
+	}
+	
+    writeToScreen('<span style="color: blue;">' +Msg.username+' say : '+  Msg.msg+'</span>');
+    //websocket.close();
+  }
+
+  function onError(evt)
+  {
+    writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+  }
+
+  function doSend(message)
+  {
+    writeToScreen("SENT: " + message);
+    websocket.send(message);
+  }
+
+  function writeToScreen(message)
+  {
+    var pre = document.createElement("p");
+    pre.style.wordWrap = "break-word";
+    pre.innerHTML = message;
+    output.appendChild(pre);
+  }
+
+  window.addEventListener("load", init, false);
+
+	currentChannel = null;
+	currentUsername = null;
+	function join (){ 
+		var txtUsername = document.getElementById("txtUsername").value;
+		var txtChannel = document.getElementById("txtChannel").value;
+		currentUsername = txtUsername;
+	currentChannel = txtChannel;
+		//{"req":"join","channel":"chat","username":"abc"}
+		var txtMsg = {"req":"join","channel":txtChannel,"username":txtUsername}
+		 websocket.send(JSON.stringify(txtMsg));
+	}
+	
+	function kirimChat(){
+		var txtPesan = document.getElementById("txtPesan").value;
+		var txtUsername2 = document.getElementById("txtUsername2").value;
+		//{"req":"send","channel":"chat","msg":"txt", "username":"abc"}
+		var txtMsg = '';
+		if(txtUsername2.length == 0){
+			txtMsg = {"req":"send","channel":currentChannel,"msg":txtPesan}
+		}else{
+			txtMsg = {"req":"send","channel":currentChannel,"msg":txtPesan,"username":txtUsername2}
+		}
+
+		websocket.send(JSON.stringify(txtMsg));
+	}
+  </script>
+
+  <h2>WebSocket Test</h2>
+Username : 	<input type="text" id="txtUsername"> <br/>
+Channel : 	<input type="text" id="txtChannel"> <br/>
+<button onclick="join()" >Join</button>
+<hr/>
+<h5>Kirim Chat</h5>
+Username(opsional)<input type="text" id="txtUsername2" ><br/>
+Text <input type="text" id="txtPesan" ><br/>
+<button onclick="kirimChat()" >Kirim Pesan</button>
+
+  <div id="output">
+  
+  </div>
